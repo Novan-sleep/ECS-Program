@@ -20,8 +20,12 @@
 #include <SPI.h>
 #include <SD.h>
 
-#define SD_CS_PIN 5
-#define LOG_FILE  "/log.txt"
+#define SD_CS_PIN   5
+#define SD_SCK_PIN  18
+#define SD_MISO_PIN 19
+#define SD_MOSI_PIN 23
+#define SD_SPI_HZ   4000000
+#define LOG_FILE    "/log.txt"
 
 void writeLog(const String &message) {
   File file = SD.open(LOG_FILE, FILE_APPEND);
@@ -54,7 +58,9 @@ void setup() {
   Serial.println();
   Serial.println("=== SD Card Reader (SPI) ===");
 
-  if (!SD.begin(SD_CS_PIN)) {
+  SPI.begin(SD_SCK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
+
+  if (!SD.begin(SD_CS_PIN, SPI, SD_SPI_HZ)) {
     Serial.println("Inisialisasi SD card gagal. Cek wiring SPI & CS pin.");
     return;
   }
